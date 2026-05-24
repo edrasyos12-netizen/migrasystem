@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OPK — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+  --bg: #1a3a8f; --surface: rgba(255,255,255,0.12); --surface2: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.2); --accent: #4d9fff; --danger: #ef4444;
+  --text: #ffffff; --text2: rgba(255,255,255,0.75); --text3: rgba(255,255,255,0.4);
+}
+    body {
+      background: var(--bg); font-family: 'DM Sans', sans-serif;
+      min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; overflow: hidden; position: relative;
+    }
+    .bg-grid {
+  position: fixed; inset: 0; z-index: 0;
+  background: linear-gradient(160deg, #1a3a8f 0%, #1e56c8 40%, #1a3a8f 100%);
+}
+    .bg-glow {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 15% 60%, rgba(255,255,255,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 30%, rgba(100,160,255,0.15) 0%, transparent 55%);
+  animation: waveMove 8s ease-in-out infinite alternate;
+}
+    .bg-glow2 {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 0;
+  height: 55%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(255,255,255,0.06)' d='M0,160L60,170.7C120,181,240,203,360,192C480,181,600,139,720,138.7C840,139,960,181,1080,186.7C1200,192,1320,160,1380,144L1440,128L1440,320L0,320Z'/%3E%3C/svg%3E") no-repeat bottom/cover,
+              url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(255,255,255,0.04)' d='M0,224L80,213.3C160,203,320,181,480,186.7C640,192,800,224,960,218.7C1120,213,1280,171,1360,149.3L1440,128L1440,320Z'/%3E%3C/svg%3E") no-repeat bottom/cover;
+  animation: waveShift 6s ease-in-out infinite alternate;
+}
+   @keyframes waveMove {
+  from { opacity: 0.8; transform: scale(1); }
+  to   { opacity: 1;   transform: scale(1.05); }
+}
+    .login-card {
+  position: relative; z-index: 10;
+  background: rgba(255,255,255,0.13);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 24px; padding: 52px 44px; width: 440px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+  backdrop-filter: blur(20px);
+  animation: slideUp 0.5s ease both;
+}
+   @keyframes waveShift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(30px); }
+}
+    .logo-row { display:flex; align-items:center; gap:10px; margin-bottom:28px; }
+    .logo-icon {
+      width:40px; height:40px;
+      background: linear-gradient(135deg, var(--accent), #0077aa);
+      border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px;
+    }
+    .logo-text { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; color:var(--text); letter-spacing:1px; }
+    .logo-text span { color:var(--accent); }
+    h1 { font-family:'Syne',sans-serif; font-size:26px; font-weight:800; color:var(--text); margin-bottom:6px; }
+    .subtitle { font-size:14px; color:var(--text2); margin-bottom:36px; }
+    .field { margin-bottom:18px; }
+    .field label { display:block; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--text2); margin-bottom:8px; }
+    .input-wrap { position:relative; }
+    .input-wrap .icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:15px; opacity:0.4; }
+    .field input {
+      width:100%; background:var(--surface2); border:1px solid var(--border);
+      border-radius:12px; padding:13px 14px 13px 42px; color:var(--text);
+      font-size:15px; font-family:'DM Sans',sans-serif; outline:none;
+      transition:border-color 0.2s, box-shadow 0.2s;
+    }
+    .field input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,212,255,0.1); }
+    .field input::placeholder { color:var(--text3); }
+    .error-msg {
+      background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25);
+      border-radius:10px; padding:11px 14px; color:#fca5a5; font-size:13px;
+      margin-bottom:18px; display:none;
+    }
+    .error-msg.show { display:block; }
+    .btn-login {
+      width:100%;
+      background:linear-gradient(135deg, var(--accent) 0%, #0096bb 100%);
+      border:none; border-radius:12px; padding:14px; color:#080d1a;
+      font-size:15px; font-weight:700; font-family:'Syne',sans-serif;
+      letter-spacing:1px; cursor:pointer; margin-top:8px;
+      transition:transform 0.15s, opacity 0.15s, box-shadow 0.2s;
+      box-shadow:0 4px 20px rgba(0,212,255,0.25);
+    }
+    .btn-login:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,212,255,0.35); }
+    .btn-login:active { transform:translateY(0); }
+    .btn-login:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+    .spinner {
+      display:inline-block; width:16px; height:16px;
+      border:2px solid rgba(0,0,0,0.3); border-top-color:#080d1a;
+      border-radius:50%; animation:spin 0.7s linear infinite;
+      vertical-align:middle; margin-right:6px;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .footer-note { margin-top:24px; text-align:center; font-size:12px; color:var(--text3); }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <div class="bg-glow2"></div>
+
+  <div class="login-card">
+    
+    
+    <p class="subtitle"></p>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="field">
+      <label>Correo electrónico</label>
+      <div class="input-wrap">
+        <span class="icon">✉</span>
+        <input type="email" id="email" placeholder="correo@empresa.com" autocomplete="email"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <div class="input-wrap">
+        <span class="icon">🔒</span>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+    </div>
+
+    <button class="btn-login" id="btnLogin" onclick="handleLogin()">
+      Ingresar 
+    </button>
+
+    <p class="footer-note">¿Problemas para acceder? Contacta al administrador.</p>
+  </div>
+
+  <script>
+    // Si ya hay sesión activa, ir directo al dashboard
+    if (sessionStorage.getItem("ms_user")) {
+      window.location.replace("index.html");
+    }
+    // ── CONFIG SUPABASE ──────────────────────────────────────
+    const SUPABASE_URL = "https://chafcdioxhujvgatxfhn.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_v-dw-QeeODzIkGEuhVkWYg_vCcRAD7q";
+    const IS_DEMO = SUPABASE_URL.includes("TU_URL");
+
+    // Solo para desarrollo local (quitar en producción)
+    const DEV_USERS = {
+      "admin@empresa.com": { password:"admin123", nombre:"Carlos Méndez", rol:"principal" },
+      "op1@empresa.com":   { password:"op123",    nombre:"Ana Torres",    rol:"secundario" },
+      "op2@empresa.com":   { password:"op123",    nombre:"Luis Ramos",    rol:"secundario" },
+    };
+
+    ["email","password"].forEach(id =>
+      document.getElementById(id).addEventListener("keydown", e => { if(e.key==="Enter") handleLogin(); })
+    );
+
+    async function handleLogin() {
+      const email    = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const btn      = document.getElementById("btnLogin");
+      const err      = document.getElementById("errorMsg");
+      err.classList.remove("show");
+
+      if (!email || !password) {
+        err.textContent = "⚠ Por favor ingresa tu email y contraseña.";
+        err.classList.add("show"); return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Verificando...';
+
+      if (IS_DEMO) {
+        await new Promise(r => setTimeout(r, 600));
+        const u = DEV_USERS[email];
+        if (u && u.password === password) {
+          sessionStorage.setItem("ms_user", JSON.stringify({ email, nombre:u.nombre, rol:u.rol }));
+          window.location.replace("index.html");
+        } else {
+          err.textContent = "⚠ Credenciales incorrectas.";
+          err.classList.add("show");
+          btn.disabled = false;
+          btn.innerHTML = "Ingresar al sistema →";
+        }
+      } else {
+        try {
+          const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+            method:"POST",
+            headers:{ "Content-Type":"application/json", "apikey": SUPABASE_KEY },
+            body: JSON.stringify({ email, password })
+          });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error_description || data.error);
+
+          const pRes = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${data.user.id}&select=*`, {
+            headers:{ "apikey": SUPABASE_KEY, "Authorization": `Bearer ${data.access_token}` }
+          });
+          const profiles = await pRes.json();
+          const profile  = profiles[0] || {};
+
+          sessionStorage.setItem("ms_user", JSON.stringify({
+            id: data.user.id, email: data.user.email,
+            nombre: profile.nombre || data.user.email,
+            rol: profile.rol || "secundario",
+            token: data.access_token
+          }));
+          window.location.replace("index.html");
+        } catch(e) {
+          err.textContent = "⚠ " + (e.message || "Error al conectar.");
+          err.classList.add("show");
+          btn.disabled = false;
+          btn.innerHTML = "Ingresar al sistema →";
+        }
+      }
+    }
+  </script>
+</body>
+</html>
