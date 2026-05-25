@@ -597,6 +597,22 @@
         <button class="btn-limpiar" onclick="limpiarFiltros()">✕ Limpiar</button>
       </div>
 
+      <!-- BUSCADOR -->
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div style="position:relative;flex:1">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px">🔍</span>
+          <input id="filBusquedaCodigo" type="text" placeholder="Buscar por Código..." oninput="renderInicio()"
+            style="width:100%;padding:8px 12px 8px 32px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;color:#1e293b"
+            onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#cbd5e1'"/>
+        </div>
+        <div style="position:relative;flex:1">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px">🔍</span>
+          <input id="filBusquedaTerminal" type="text" placeholder="Buscar por Terminal..." oninput="renderInicio()"
+            style="width:100%;padding:8px 12px 8px 32px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;color:#1e293b"
+            onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#cbd5e1'"/>
+        </div>
+      </div>
+
       <!-- TABLA -->
       <div class="casos-table-wrap">
         <div class="casos-table-scroll">
@@ -606,7 +622,7 @@
                 <th>Acciones</th>
                 <th>#</th>
                 <th>Nombre Empresa</th>
-                <th>ID Tributaria</th>
+                <th>Código</th>
                 <th>Terminal</th>
                 <th>Semana</th>
                 <th>Día</th>
@@ -723,7 +739,8 @@
         <div><h1>KPI — Indicadores Clave</h1><p>Rendimiento y cumplimiento en tiempo real</p></div>
         <div style="display:flex;gap:8px;align-items:center">
           <select id="kpiFilSemana" class="fil-select" onchange="renderKPI()" style="font-size:12px;padding:7px 12px"><option value="">Todas las semanas</option></select>
-          <button class="btn-limpiar" onclick="document.getElementById('kpiFilSemana').value='';renderKPI()">✕ Limpiar</button>
+          <select id="kpiFilDia" class="fil-select" onchange="renderKPI()" style="font-size:12px;padding:7px 12px"><option value="">Todos los días</option></select>
+          <button class="btn-limpiar" onclick="document.getElementById('kpiFilSemana').value='';document.getElementById('kpiFilDia').value='';renderKPI()">✕ Limpiar</button>
         </div>
       </div>
 
@@ -781,7 +798,7 @@
 
       <!-- HEADER -->
       <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-        <h1 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#1e293b">Asignaciones Diarias</h1>
+        <h1 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#1e293b"></h1>
         <button class="btn-primary" onclick="openMigModal()">+ Agregar Cliente</button>
       </div>
 
@@ -789,9 +806,9 @@
       <div style="background:white;border:1px solid #e2e8f0;border-radius:14px;padding:20px 24px;margin-bottom:16px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:20px">📅</span>
+            <span style="font-size:20px"></span>
             <div>
-              <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#1e293b">Progreso del Día</div>
+              <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#1e293b"></div>
               <div style="font-size:12px;color:#64748b" id="adProgresoLabel">Calculando...</div>
             </div>
           </div>
@@ -850,7 +867,7 @@
                 <th>Acciones</th>
                 <th>#</th>
                 <th>Nombre Empresa</th>
-                <th>ID Tributaria</th>
+                <th>Código</th>
                 <th>Terminal</th>
                 <th>Semana</th>
                 <th>Día</th>
@@ -908,7 +925,7 @@
       <div class="casos-table-wrap"><div class="casos-table-scroll">
         <table class="casos-table">
           <thead><tr>
-            <th>#</th><th>Nombre Empresa</th><th>ID Tributaria</th><th>Terminal</th>
+            <th>#</th><th>Nombre Empresa</th><th>Código</th><th>Terminal</th>
             <th>Semana</th><th>Día</th><th>Hora</th><th>Estado</th>
             <th>Fecha Agendada</th><th>Fecha Migración</th><th>Observaciones</th>
           </tr></thead>
@@ -947,7 +964,7 @@
       <div class="casos-table-wrap"><div class="casos-table-scroll">
         <table class="casos-table">
           <thead><tr>
-            <th>Acciones</th><th>#</th><th>Nombre Empresa</th><th>ID Tributaria</th><th>Terminal</th>
+            <th>Acciones</th><th>#</th><th>Nombre Empresa</th><th>Código</th><th>Terminal</th>
             <th>Semana</th><th>Día</th><th>Hora</th><th>Estado</th><th>Fecha Agendada</th><th>Observaciones</th>
           </tr></thead>
           <tbody id="opEstatusBody"></tbody>
@@ -1015,8 +1032,8 @@
         <input id="mEmpresa" placeholder="ej. Comercial ABC"/>
       </div>
       <div class="fg">
-        <label>Identificación Tributaria</label>
-        <input id="mTributaria" placeholder="ej. RTN-1234567"/>
+        <label>Código <span style="font-size:10px;color:#94a3b8">(único, no se puede repetir)</span></label>
+        <input id="mTributaria" placeholder="ej. COD-001"/>
       </div>
       <div class="fg">
         <label>Terminal</label>
@@ -1266,8 +1283,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     console.log("✅ Migraciones cargadas:", migs.length);
     MIGRATIONS = migs.map((m, i) => ({
       id: m.id, item: i + 1,
-      empresa: m.empresa, tributaria: m.tributaria, terminal: m.terminal,
-      semana: m.semana ?? "", dia: m.dia || "", hora: m.hora_programada || "",
+      empresa: m.empresa, codigo: m.codigo, terminal: m.terminal,
+      semana: m.semana ?? "", dia: (m.dia !== null && m.dia !== undefined) ? parseInt(m.dia) : "", hora: m.hora_programada || "",
       fechaAgendada: (m.fecha_agendada||'').slice(0,10), fechaMigracion: (m.fecha_migracion||'').slice(0,10),
       estado: m.estado, observaciones: m.observaciones || "",
       operador_id: m.operador_id || "", operador_nombre: m.operador_nombre || ""
@@ -1425,9 +1442,9 @@ function closeSidebar() {
 // EXPORTAR EXCEL REAL
 // ══════════════════════════════════════════════════════════════
 function exportExcel() {
-  const headers = ["#","Nombre Empresa","ID Tributaria","Terminal","Semana","Día","Hora Prog.","Fecha Agendada","Fecha Migración","Estado","Observaciones","Operador"];
+  const headers = ["#","Nombre Empresa","Código","Terminal","Semana","Día","Hora Prog.","Fecha Agendada","Fecha Migración","Estado","Observaciones","Operador"];
   const rows = MIGRATIONS.map((m,i) => [
-    i+1, m.empresa, m.tributaria, m.terminal,
+    i+1, m.empresa, m.codigo, m.terminal,
     m.semana||"", m.dia||"", m.hora||"—",
     m.fechaAgendada||"", m.fechaMigracion||"", m.estado||"",
     m.observaciones||"", m.operador_nombre||""
@@ -1508,7 +1525,7 @@ function exportExcel() {
 // RENDER INICIO
 // ══════════════════════════════════════════════════════════════
 function limpiarFiltros() {
-  ["filAnio","filMes","filSemana","filDia","filHora","filOperador","filEstatus"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
+  ["filAnio","filMes","filSemana","filDia","filHora","filOperador","filEstatus","filBusquedaCodigo","filBusquedaTerminal"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
   renderInicio();
 }
 
@@ -1535,7 +1552,7 @@ function renderInicio() {
   }
 
   // Gráfica línea con delay para que el canvas tenga dimensiones
-  setTimeout(() => renderLineChart(), 60);
+  setTimeout(() => { renderLineChart(); }, 300);
 
   // Poblar filtros dinámicos
   populateFiltros();
@@ -1548,6 +1565,8 @@ function renderInicio() {
   const fDia      = document.getElementById("filDia")?.value || "";
   const fOperador = document.getElementById("filOperador")?.value || "";
   const fEstatus  = document.getElementById("filEstatus")?.value || "";
+  const fCodigo   = (document.getElementById("filBusquedaCodigo")?.value || "").toLowerCase().trim();
+  const fTerminal = (document.getElementById("filBusquedaTerminal")?.value || "").toLowerCase().trim();
 
   const INICIO_ESTADOS = ["Finalizado", "Pausado"];
 
@@ -1563,6 +1582,8 @@ function renderInicio() {
     if (fDia      && m.dia !== fDia) return false;
     if (fOperador && m.operador_id !== fOperador) return false;
     if (fEstatus  && m.estado !== fEstatus) return false;
+    if (fCodigo   && !(m.codigo||"").toString().toLowerCase().includes(fCodigo)) return false;
+    if (fTerminal && !(m.terminal||"").toString().toLowerCase().includes(fTerminal)) return false;
     return true;
   });
 
@@ -1581,7 +1602,7 @@ function renderInicio() {
       </td>
       <td style="color:#94a3b8;font-size:12px">${i+1}</td>
       <td style="font-weight:600;color:#1e293b">${m.empresa}</td>
-      <td style="font-size:12px;font-family:monospace;color:#2563eb">${m.tributaria}</td>
+      <td style="font-size:12px;font-family:monospace;color:#2563eb">${m.codigo}</td>
       <td style="font-size:12px">${m.terminal}</td>
       <td style="font-size:12px;text-align:center;font-weight:600;color:#1d4ed8">${m.semana||'—'}</td>
       <td style="font-size:12px;text-align:center">${m.dia||'—'}</td>
@@ -1647,15 +1668,15 @@ function renderLineChart() {
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Últimos 14 días
-  const days = [], labels = [], counts = [];
-  for (let i = 13; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const key = d.toISOString().split("T")[0];
-    days.push(key);
-    labels.push(`${d.getDate()}/${d.getMonth()+1}`);
-    counts.push(MIGRATIONS.filter(m => m.estado==="Finalizado" && m.fechaMigracion && m.fechaMigracion.slice(0,10)===key).length);
-  }
+  // Agrupar finalizados por número de día (columna "dia" es int4)
+  const diasNums = [...new Set(
+    MIGRATIONS.filter(m => m.estado==="Finalizado" && (m.dia !== null && m.dia !== "" && m.dia !== undefined)).map(m => parseInt(m.dia))
+  )].filter(n => !isNaN(n)).sort((a,b) => a - b);
+
+  const labels = diasNums.length ? diasNums.map(String) : ["—"];
+  const counts = diasNums.length ? diasNums.map(dia =>
+    MIGRATIONS.filter(m => m.estado==="Finalizado" && parseInt(m.dia) === dia).length
+  ) : [0];
 
   const CW = canvas.width, CH = canvas.height;
   const padTop = 24, padBottom = 18, padLeft = 26, padRight = 8;
@@ -1673,8 +1694,13 @@ function renderLineChart() {
   }
 
   // Puntos coordenadas
+  if (!diasNums.length) {
+    ctx.fillStyle = "#94a3b8"; ctx.font = "12px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Sin datos finalizados", CW/2, CH/2);
+    return;
+  }
   const pts = counts.map((v, i) => ({
-    x: padLeft + (i / (counts.length - 1)) * chartW,
+    x: padLeft + (counts.length === 1 ? chartW/2 : (i / (counts.length - 1)) * chartW),
     y: padTop + chartH - (v / maxV) * chartH
   }));
 
@@ -1768,7 +1794,7 @@ function openMigModal(id = null) {
   if (id) {
     const m = MIGRATIONS.find(x => x.id === id);
     document.getElementById("mEmpresa").value        = m.empresa;
-    document.getElementById("mTributaria").value     = m.tributaria;
+    document.getElementById("mTributaria").value     = m.codigo;
     document.getElementById("mTerminal").value       = m.terminal;
     document.getElementById("mFechaAgendada").value  = m.fechaAgendada;
     document.getElementById("mFechaMigracion").value = m.fechaMigracion;
@@ -1843,18 +1869,18 @@ async function saveMigration() {
 
   // Validaciones
   if (!empresa)    { errEl.textContent = "⚠ El nombre de la empresa es obligatorio."; errEl.style.display="block"; return; }
-  if (!tributaria) { errEl.textContent = "⚠ La identificación tributaria es obligatoria."; errEl.style.display="block"; return; }
+  if (!tributaria) { errEl.textContent = "⚠ El código es obligatorio."; errEl.style.display="block"; return; }
   if (!terminal)   { errEl.textContent = "⚠ El terminal es obligatorio."; errEl.style.display="block"; return; }
   if (estado === "Pausado" && !obs) { errEl.textContent = "⚠ Las observaciones son obligatorias cuando el estado es Pausado."; errEl.style.display="block"; return; }
   if (estado === "Finalizado" && !fechaMig) { errEl.textContent = "⚠ La fecha de migración es obligatoria cuando el estado es Finalizado."; errEl.style.display="block"; document.getElementById("mFechaMigracion").focus(); return; }
 
-  // Verificar duplicado tributaria
-  const dupTrib = MIGRATIONS.find(m => m.tributaria === tributaria && m.id !== editingMigId);
-  if (dupTrib) { showDupAlert("ID Tributaria", tributaria, dupTrib); return; }
-
-  // Verificar duplicado terminal
-  const dupTerm = MIGRATIONS.find(m => m.terminal === terminal && m.id !== editingMigId);
-  if (dupTerm) { showDupAlert("Terminal", terminal, dupTerm); return; }
+  // Verificar duplicado Código (único)
+  const dupTrib = MIGRATIONS.find(m => m.codigo === tributaria && m.id !== editingMigId);
+  if (dupTrib) {
+    const estCls = dupTrib.estado==="Finalizado"?"finalizado":dupTrib.estado==="En Proceso"?"en_proceso":dupTrib.estado==="Programado"?"programado":dupTrib.estado==="Pausado"?"pausado":"pendiente";
+    showDupAlert("Código", tributaria, dupTrib, estCls);
+    return;
+  }
 
   const op = OPERATORS.find(o => o.id === opId);
   const obsFinal = estado === "Finalizado" && !obs ? "Migración Exitosa" : obs;
@@ -1864,7 +1890,7 @@ async function saveMigration() {
   const hora   = document.getElementById("mHora").value || null;
 
   const payload = {
-    empresa, tributaria, terminal,
+    empresa, codigo: tributaria, terminal,
     semana: semana ? parseInt(semana) : null,
     dia:    dia    || null,
     hora_programada: hora,
@@ -1890,8 +1916,8 @@ async function saveMigration() {
     const migs = await sbSelect("migraciones", "select=*&order=created_at.asc");
     MIGRATIONS = (migs || []).map((m, i) => ({
       id: m.id, item: i + 1,
-      empresa: m.empresa, tributaria: m.tributaria, terminal: m.terminal,
-      semana: m.semana ?? "", dia: m.dia || "", hora: m.hora_programada || "",
+      empresa: m.empresa, codigo: m.codigo, terminal: m.terminal,
+      semana: m.semana ?? "", dia: (m.dia !== null && m.dia !== undefined) ? parseInt(m.dia) : "", hora: m.hora_programada || "",
       fechaAgendada: (m.fecha_agendada||'').slice(0,10), fechaMigracion: (m.fecha_migracion||'').slice(0,10),
       estado: m.estado, observaciones: m.observaciones || "",
       operador_id: m.operador_id || "", operador_nombre: m.operador_nombre || ""
@@ -1922,7 +1948,7 @@ function viewMig(id) {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px">
       ${[
         ["Empresa",         m.empresa],
-        ["ID Tributaria",   m.tributaria],
+        ["Código",          m.codigo],
         ["Terminal",        m.terminal],
         ["Semana",          m.semana||'—'],
         ["Día",             m.dia||'—'],
@@ -1952,7 +1978,7 @@ async function deleteMig(id) {
   try {
     await sbDelete("migraciones", id);
     const migs = await sbSelect("migraciones", "select=*&order=created_at.asc");
-    MIGRATIONS = migs.map((m,i)=>({ id:m.id, item:i+1, empresa:m.empresa, tributaria:m.tributaria, terminal:m.terminal, semana:m.semana??'', dia:m.dia||'', hora:m.hora_programada||'', fechaAgendada:(m.fecha_agendada||"").slice(0,10), fechaMigracion:(m.fecha_migracion||"").slice(0,10), estado:m.estado, observaciones:m.observaciones||"", operador_id:m.operador_id||"", operador_nombre:m.operador_nombre||"" }));
+    MIGRATIONS = migs.map((m,i)=>({ id:m.id, item:i+1, empresa:m.empresa, codigo:m.codigo, terminal:m.terminal, semana:m.semana??'', dia:(m.dia!==null&&m.dia!==undefined)?parseInt(m.dia):'', hora:m.hora_programada||'', fechaAgendada:(m.fecha_agendada||"").slice(0,10), fechaMigracion:(m.fecha_migracion||"").slice(0,10), estado:m.estado, observaciones:m.observaciones||"", operador_id:m.operador_id||"", operador_nombre:m.operador_nombre||"" }));
     renderInicio();
   } catch(e) { alert("Error al eliminar: " + e.message); }
 }
@@ -1970,11 +1996,13 @@ function reactivateMig(id) {
 }
 
 // ── ALERTA DUPLICADO ──────────────────────────────────────────
-function showDupAlert(campo, valor, registro) {
+function showDupAlert(campo, valor, registro, estCls) {
   dupTargetId = registro.id;
+  const cls = estCls || (registro.estado==="Finalizado"?"finalizado":registro.estado==="En Proceso"?"en_proceso":registro.estado==="Programado"?"programado":registro.estado==="Pausado"?"pausado":"pendiente");
   document.getElementById("dupMsg").textContent = `⚠ ${campo} ya registrado`;
   document.getElementById("dupDetail").innerHTML =
-    `El valor <strong style="color:#60c0ff">${valor}</strong> ya existe en el registro de <strong>${registro.empresa}</strong> con estado <span class="badge ${registro.estado==='Finalizado'?'completada':registro.estado==='En Proceso'?'en_proceso':'pausado'}">${registro.estado}</span>`;
+    `El código <strong style="color:#2563eb">${valor}</strong> ya existe en el registro de <strong>${registro.empresa}</strong>.<br><br>
+     <span style="font-size:12px;color:#64748b">Estado actual: </span><span class="est-badge ${cls}" style="font-size:12px"><span class="dot"></span>${registro.estado}</span>`;
   document.getElementById("dupModalOverlay").classList.add("open");
 }
 function closeDupModal()    { document.getElementById("dupModalOverlay").classList.remove("open"); }
@@ -1985,6 +2013,7 @@ function openEditFromDup()  { if (dupTargetId) openMigModal(dupTargetId); }
 // ══════════════════════════════════════════════════════════════
 function renderKPI() {
   const fSem = document.getElementById("kpiFilSemana")?.value || "";
+  const fDia = document.getElementById("kpiFilDia")?.value || "";
 
   // ── Poblar filtro semanas ────────────────────────────────────
   const semanas = [...new Set(MIGRATIONS.map(m => m.semana).filter(Boolean))].sort((a,b)=>a-b);
@@ -1994,8 +2023,18 @@ function renderKPI() {
     selSem.innerHTML = `<option value="">Todas las semanas</option>` + semanas.map(s=>`<option value="${s}" ${cur==s?"selected":""}>${s}</option>`).join("");
   }
 
+  // ── Poblar filtro días ───────────────────────────────────────
+  const dias = [...new Set(MIGRATIONS.map(m => m.dia).filter(v => v !== "" && v !== null && v !== undefined))].sort((a,b) => parseInt(a)-parseInt(b));
+  const selDia = document.getElementById("kpiFilDia");
+  if (selDia) {
+    const cur = selDia.value;
+    selDia.innerHTML = `<option value="">Todos los días</option>` + dias.map(d=>`<option value="${d}" ${cur==d?"selected":""}>${d}</option>`).join("");
+  }
+
   // ── Datos filtrados ──────────────────────────────────────────
-  const base = fSem ? MIGRATIONS.filter(m => m.semana?.toString() === fSem) : MIGRATIONS;
+  let base = MIGRATIONS;
+  if (fSem) base = base.filter(m => m.semana?.toString() === fSem);
+  if (fDia) base = base.filter(m => parseInt(m.dia) === parseInt(fDia));
 
   const total       = base.length;
   const finalizado  = base.filter(m => m.estado === "Finalizado").length;
@@ -2583,7 +2622,7 @@ function renderAsignaciones() {
       </td>
       <td style="color:#94a3b8;font-size:12px">${i+1}</td>
       <td style="font-weight:600;color:#1e293b">${m.empresa}</td>
-      <td style="font-size:12px;font-family:monospace;color:#2563eb">${m.tributaria}</td>
+      <td style="font-size:12px;font-family:monospace;color:#2563eb">${m.codigo}</td>
       <td style="font-size:12px">${m.terminal}</td>
       <td style="font-size:12px;text-align:center;font-weight:600;color:#1d4ed8">${m.semana||'—'}</td>
       <td style="font-size:12px;text-align:center">${m.dia||'—'}</td>
@@ -2606,7 +2645,7 @@ async function deleteMigAD(id) {
   try {
     await sbDelete("migraciones", id);
     const migs = await sbSelect("migraciones", "select=*&order=created_at.asc");
-    MIGRATIONS = migs.map((m,i)=>({ id:m.id, item:i+1, empresa:m.empresa, tributaria:m.tributaria, terminal:m.terminal, semana:m.semana??'', dia:m.dia||'', hora:m.hora_programada||'', fechaAgendada:(m.fecha_agendada||"").slice(0,10), fechaMigracion:(m.fecha_migracion||"").slice(0,10), estado:m.estado, observaciones:m.observaciones||"", operador_id:m.operador_id||"", operador_nombre:m.operador_nombre||"" }));
+    MIGRATIONS = migs.map((m,i)=>({ id:m.id, item:i+1, empresa:m.empresa, codigo:m.codigo, terminal:m.terminal, semana:m.semana??'', dia:(m.dia!==null&&m.dia!==undefined)?parseInt(m.dia):'', hora:m.hora_programada||'', fechaAgendada:(m.fecha_agendada||"").slice(0,10), fechaMigracion:(m.fecha_migracion||"").slice(0,10), estado:m.estado, observaciones:m.observaciones||"", operador_id:m.operador_id||"", operador_nombre:m.operador_nombre||"" }));
     renderAsignaciones();
   } catch(e) { alert("Error al eliminar: " + e.message); }
 }
@@ -2651,7 +2690,7 @@ function renderOpInicio() {
     return `<tr>
       <td style="color:#94a3b8;font-size:12px">${i+1}</td>
       <td style="font-weight:600;color:#1e293b">${m.empresa}</td>
-      <td style="font-size:12px;font-family:monospace;color:#2563eb">${m.tributaria}</td>
+      <td style="font-size:12px;font-family:monospace;color:#2563eb">${m.codigo}</td>
       <td style="font-size:12px">${m.terminal}</td>
       <td style="font-size:12px;text-align:center;font-weight:600;color:#1d4ed8">${m.semana||'—'}</td>
       <td style="font-size:12px;text-align:center">${m.dia||'—'}</td>
@@ -2661,7 +2700,7 @@ function renderOpInicio() {
       <td style="font-size:12px">${m.fechaMigracion||'—'}</td>
       <td style="font-size:12px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${m.observaciones||''}">${m.observaciones||'—'}</td>
     </tr>`;
-  }).join("") : `<tr><td colspan="11" style="text-align:center;padding:40px;color:#94a3b8">No tienes registros finalizados o pausados aún</td></tr>`;
+  }).join("") : `<tr><td colspan="10" style="text-align:center;padding:40px;color:#94a3b8">No tienes registros finalizados o pausados aún</td></tr>`;
 }
 
 function limpiarFiltrosOpInicio() {
@@ -2714,7 +2753,7 @@ function renderOpEstatus() {
       </div></td>
       <td style="color:#94a3b8;font-size:12px">${i+1}</td>
       <td style="font-weight:600;color:#1e293b">${m.empresa}</td>
-      <td style="font-size:12px;font-family:monospace;color:#2563eb">${m.tributaria}</td>
+      <td style="font-size:12px;font-family:monospace;color:#2563eb">${m.codigo}</td>
       <td style="font-size:12px">${m.terminal}</td>
       <td style="font-size:12px;text-align:center;font-weight:600;color:#1d4ed8">${m.semana||'—'}</td>
       <td style="font-size:12px;text-align:center">${m.dia||'—'}</td>
@@ -2723,7 +2762,7 @@ function renderOpEstatus() {
       <td style="font-size:12px">${m.fechaAgendada||'—'}</td>
       <td style="font-size:12px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${m.observaciones||''}">${m.observaciones||'—'}</td>
     </tr>`;
-  }).join("") : `<tr><td colspan="11" style="text-align:center;padding:40px;color:#94a3b8">No tienes asignaciones activas</td></tr>`;
+  }).join("") : `<tr><td colspan="10" style="text-align:center;padding:40px;color:#94a3b8">No tienes asignaciones activas</td></tr>`;
 }
 
 function limpiarFiltrosOpAD() {
