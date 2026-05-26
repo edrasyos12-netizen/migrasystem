@@ -858,6 +858,22 @@
         <button class="btn-limpiar" onclick="limpiarFiltrosAD()">✕ Limpiar</button>
       </div>
 
+      <!-- BUSCADOR -->
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div style="position:relative;flex:1">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px">🔍</span>
+          <input id="adBusEmpresa" type="text" placeholder="Buscar por Empresa..." oninput="renderAsignaciones()"
+            style="width:100%;padding:8px 12px 8px 32px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;color:#1e293b"
+            onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#cbd5e1'"/>
+        </div>
+        <div style="position:relative;flex:1">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px">🔍</span>
+          <input id="adBusCodigo" type="text" placeholder="Buscar por Código..." oninput="renderAsignaciones()"
+            style="width:100%;padding:8px 12px 8px 32px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;color:#1e293b"
+            onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#cbd5e1'"/>
+        </div>
+      </div>
+
       <!-- TABLA -->
       <div class="casos-table-wrap">
         <div class="casos-table-scroll">
@@ -1554,10 +1570,7 @@ function renderInicio() {
   // Gráfica línea con delay para que el canvas tenga dimensiones
   setTimeout(() => { renderLineChart(); }, 300);
 
-  // Poblar filtros dinámicos
-  populateFiltros();
-
-  // Filtrar registros
+  // Leer valores ANTES de repoblar los selects
   const fAnio     = document.getElementById("filAnio")?.value || "";
   const fMes      = document.getElementById("filMes")?.value || "";
   const fSemana   = document.getElementById("filSemana")?.value || "";
@@ -1567,6 +1580,9 @@ function renderInicio() {
   const fEstatus  = document.getElementById("filEstatus")?.value || "";
   const fCodigo   = (document.getElementById("filBusquedaCodigo")?.value || "").toLowerCase().trim();
   const fTerminal = (document.getElementById("filBusquedaTerminal")?.value || "").toLowerCase().trim();
+
+  // Poblar filtros pasando los valores guardados para que no se pierdan
+  populateFiltros({ anio: fAnio, mes: fMes, semana: fSemana, hora: fHora, dia: fDia, operador: fOperador });
 
   const INICIO_ESTADOS = ["Finalizado", "Pausado"];
 
@@ -1579,7 +1595,7 @@ function renderInicio() {
     if (fMes      && (!dt || (dt.getMonth()+1).toString() !== fMes)) return false;
     if (fSemana   && m.semana?.toString() !== fSemana) return false;
     if (fHora     && m.hora !== fHora) return false;
-    if (fDia      && m.dia !== fDia) return false;
+    if (fDia      && parseInt(m.dia) !== parseInt(fDia)) return false;
     if (fOperador && m.operador_id !== fOperador) return false;
     if (fEstatus  && m.estado !== fEstatus) return false;
     if (fCodigo   && !(m.codigo||"").toString().toLowerCase().includes(fCodigo)) return false;
@@ -1616,16 +1632,14 @@ function renderInicio() {
   }).join("") : `<tr><td colspan="12" style="text-align:center;padding:40px;color:#94a3b8">Sin registros</td></tr>`;
 }
 
-function populateFiltros() {
+function populateFiltros(savedVals) {
   const años     = [...new Set(MIGRATIONS.map(m => { const d=m.fechaMigracion||m.fechaAgendada; return d?new Date(d).getFullYear():null; }).filter(Boolean))].sort();
   const meses    = [...new Set(MIGRATIONS.map(m => { const d=m.fechaMigracion||m.fechaAgendada; return d?new Date(d).getMonth()+1:null; }).filter(Boolean))].sort((a,b)=>a-b);
   const mesesNom = ["","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
   const semanas  = [...new Set(MIGRATIONS.map(m => m.semana).filter(v => v !== "" && v !== null && v !== undefined))].sort((a,b)=>a-b);
-  const dias     = [...new Set(MIGRATIONS.map(m => m.dia).filter(Boolean))];
-  const diasOrden = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
-  dias.sort((a,b) => { const ia=diasOrden.indexOf(a), ib=diasOrden.indexOf(b); return (ia===-1?99:ia)-(ib===-1?99:ib); });
+  const dias = [...new Set(MIGRATIONS.map(m => m.dia).filter(v => v !== null && v !== undefined && v !== ""))].sort((a,b) => parseInt(a)-parseInt(b));
 
-  const cur = {
+  const cur = savedVals || {
     anio:    document.getElementById("filAnio")?.value,
     mes:     document.getElementById("filMes")?.value,
     semana:  document.getElementById("filSemana")?.value,
@@ -1647,7 +1661,7 @@ function populateFiltros() {
   if (selHora) { selHora.innerHTML = `<option value="">Todas las horas</option>` + horas.map(h=>`<option value="${h}" ${cur.hora==h?"selected":""}>${h}</option>`).join(""); }
 
   const selDia = document.getElementById("filDia");
-  if (selDia) { selDia.innerHTML = `<option value="">Todos los días</option>` + dias.map(d=>`<option value="${d}" ${cur.dia===d?"selected":""}>${d}</option>`).join(""); }
+  if (selDia) { selDia.innerHTML = `<option value="">Todos los días</option>` + dias.map(d=>`<option value="${d}" ${String(cur.dia)===String(d)?"selected":""}>${d}</option>`).join(""); }
 
   const selOp = document.getElementById("filOperador");
   if (selOp) { selOp.innerHTML = `<option value="">Todos los operadores</option>` + OPERATORS.map(o=>`<option value="${o.id}" ${cur.operador===o.id?"selected":""}>${o.nombre}</option>`).join(""); }
@@ -2132,9 +2146,17 @@ function renderKPI() {
     </div>
   `).join("");
 
-  // ── Ranking de operadores ────────────────────────────────────
+  // ── Ranking de operadores (filtrado por semana y día del KPI) ──
   const rankData = OPERATORS.map(op => {
-    const s = opStats(op.id);
+    const mine = base.filter(m => m.operador_id === op.id);
+    const s = {
+      total:      mine.length,
+      enProceso:  mine.filter(m => m.estado === "En Proceso").length,
+      pendiente:  mine.filter(m => m.estado === "Pendiente").length,
+      programado: mine.filter(m => m.estado === "Programado").length,
+      finalizado: mine.filter(m => m.estado === "Finalizado").length,
+      pausado:    mine.filter(m => m.estado === "Pausado").length,
+    };
     const tasa = s.total > 0 ? Math.round((s.finalizado / s.total) * 100) : 0;
     return { ...op, ...s, tasa };
   }).sort((a, b) => b.finalizado - a.finalizado || b.tasa - a.tasa);
@@ -2545,10 +2567,13 @@ function renderHistorial() {
 const ACTIVE_ESTADOS = ["En Proceso", "Pendiente", "Programado"];
 
 function renderAsignaciones() {
+  // Filtrar solo por el día de hoy (columna dia = día del mes actual)
+  const hoy = new Date().getDate();
+  const delDia      = MIGRATIONS.filter(m => parseInt(m.dia) === hoy);
   // Solo registros activos (no Finalizado ni Pausado)
   const activos     = MIGRATIONS.filter(m => ACTIVE_ESTADOS.includes(m.estado));
-  const completados = MIGRATIONS.filter(m => m.estado === "Finalizado" || m.estado === "Pausado").length;
-  const total       = MIGRATIONS.length;
+  const completados = delDia.filter(m => m.estado === "Finalizado" || m.estado === "Pausado").length;
+  const total       = delDia.length;
   const pct         = total > 0 ? Math.round((completados / total) * 100) : 0;
   const faltantes   = activos.length;
   const barColor    = pct >= 80 ? "linear-gradient(90deg,#10b981,#34d399)"
@@ -2594,17 +2619,21 @@ function renderAsignaciones() {
   if (selOp) selOp.innerHTML = `<option value="">Todos los operadores</option>` + OPERATORS.map(o=>`<option value="${o.id}" ${curOp===o.id?"selected":""}>${o.nombre}</option>`).join("");
 
   // Aplicar filtros
-  const fSem = document.getElementById("adFilSemana")?.value || "";
-  const fDia = document.getElementById("adFilDia")?.value    || "";
-  const fOp  = document.getElementById("adFilOp")?.value     || "";
-  const fEst = document.getElementById("adFilEstatus")?.value || "";
+  const fSem     = document.getElementById("adFilSemana")?.value || "";
+  const fDia     = document.getElementById("adFilDia")?.value    || "";
+  const fOp      = document.getElementById("adFilOp")?.value     || "";
+  const fEst     = document.getElementById("adFilEstatus")?.value || "";
+  const fEmpresa = (document.getElementById("adBusEmpresa")?.value || "").toLowerCase().trim();
+  const fCodigo  = (document.getElementById("adBusCodigo")?.value  || "").toLowerCase().trim();
 
   const filtered = activos.filter(m => {
-    if (fSem && m.semana?.toString() !== fSem) return false;
-    if (curHora && m.hora !== curHora) return false;
-    if (fDia && m.dia !== fDia)                return false;
-    if (fOp  && m.operador_id !== fOp)         return false;
-    if (fEst && m.estado !== fEst)             return false;
+    if (fSem     && m.semana?.toString() !== fSem) return false;
+    if (curHora  && m.hora !== curHora) return false;
+    if (fDia     && parseInt(m.dia) !== parseInt(fDia)) return false;
+    if (fOp      && m.operador_id !== fOp) return false;
+    if (fEst     && m.estado !== fEst) return false;
+    if (fEmpresa && !(m.empresa||"").toLowerCase().includes(fEmpresa)) return false;
+    if (fCodigo  && !(m.codigo||"").toString().toLowerCase().includes(fCodigo)) return false;
     return true;
   });
 
@@ -2636,7 +2665,7 @@ function renderAsignaciones() {
 }
 
 function limpiarFiltrosAD() {
-  ["adFilSemana","adFilDia","adFilHora","adFilOp","adFilEstatus"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
+  ["adFilSemana","adFilDia","adFilHora","adFilOp","adFilEstatus","adBusEmpresa","adBusCodigo"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
   renderAsignaciones();
 }
 
